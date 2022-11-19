@@ -1,6 +1,3 @@
-const fragment = new URLSearchParams(window.location.hash.slice(1));
-const [accessToken, tokenType] = [fragment.get('access_token'), fragment.get('token_type')];
-
 var perms = {
         generalViewChannels: 1024,
         generalCreateInvite: 1,
@@ -44,56 +41,7 @@ var perms = {
         voiceStageRequestSpeak: 4294967296
 };
 
-let getUserLogin = () => {
-	fetch('https://discord.com/api/users/@me', {
-		headers: {
-			authorization: `${tokenType} ${accessToken}`,
-		},
-	})
-		.then(result => result.json())
-		.then(response => {
-			const { username, discriminator, id, avatar} = response;
-			document.getElementById('info').innerText = ` ${username}#${discriminator}`;
-
-			let img = document.createElement('img');
-			let src = `https://cdn.discordapp.com/avatars/${id}/${avatar}.png`;
-			img.src = src;
-			document.body.appendChild(img);
-		})
-		.catch(console.error);
-};
-
-let getUserGuilds = () => {
-	fetch('https://discord.com/api/users/@me/guilds', {
-		headers: {
-			authorization: `${tokenType} ${accessToken}`,
-		},
-	})
-		.then(result => result.json())
-		.then(response => {
-				createPage(response);
-			})
-		.catch(console.error);
-};
-
-let createPage = (response) => {
-	let guilds = document.createElement('div');
-	guilds.innerText = 'GUILDS';
-	document.body.appendChild(guilds);
-	for(const guild of response){
-		let perms = checkPerms(guild.permissions);
-		console.log(perms);
-		if(perms['generalAdministrator'] == true){
-			let g = document.createElement('a');
-      g.href = `/config/${guild.id}`;
-			g.innerText += `\n${guild.name}`;
-			guilds.appendChild(g);
-		}
-	}
-
-};
-
-function checkPerms(e) {
+const checkPerms = (e) => {
 		let guildPerms = {};
     var t = Math.floor(e / 4294967296),
         n = Math.floor(e % 4294967296);
@@ -101,14 +49,6 @@ function checkPerms(e) {
 		return guildPerms;
 }
 
-window.onload = () => {
-
-
-		if (!accessToken) {
-			return (document.getElementById('login').style.display = 'block');
-		}
-		getUserLogin();
-		getUserGuilds();
-
-
-	};
+module.exports = {
+  checkPerms: checkPerms
+};

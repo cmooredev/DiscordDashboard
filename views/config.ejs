@@ -20,7 +20,17 @@
         <% } %>
         <p>Description: <%= data[i]['description'] %></p>
       <% } %>
+      <p>Guilds</p>
+      <div>
+      <% if(guild == undefined) { %>
+        <p>Bot not in guild</p>
+      <% } %>
+
+      <% if(guild != undefined) { %>
+        <p>Bot is in guild!</p>
+      <% } %>
+      </div>
     </div>
+
   </body>
-  <script type="application/javascript" src="login.js"></script>
 </html>
